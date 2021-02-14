@@ -2,72 +2,67 @@
 
 int ssid = 0;
 
-int oneWiFiConnect() {
+void _WiFiConnect(const char* ssid, const char* password) {
   int tryCount = 0;
-  Serial.println("");
-  Serial.print("Connecting to ");
-  Serial.println(ssid1);
-  WiFi.begin(ssid1, password1);
+  #ifdef WIFI_VERBOSE
+    Serial.println("");
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+  #endif
+  WiFi.begin(ssid, password);
   while ((WiFi.status() != WL_CONNECTED) && (tryCount < 5)) {
     delay(500);
-    Serial.print(".");
+    #ifdef WIFI_VERBOSE
+      Serial.print(".");
+    #endif
     tryCount++;
   }
+}
+
+int _oneWiFiConnect() {
+  _WiFiConnect(ssid1, password1);
   if (WiFi.status() == WL_CONNECTED) {
     ssid = 1;
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
+    #ifdef WIFI_VERBOSE
+      Serial.println("");
+      Serial.println("WiFi connected.");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+    #endif
     return 1;
   }
   else {
-    Serial.println("");
-    Serial.println("WiFi NOT connected.");
+    #ifdef WIFI_VERBOSE
+      Serial.println("");
+      Serial.println("WiFi NOT connected.");
+    #endif
     ssid = 0;
     return 0;
   }
 }
 
-int twoWiFiConnect() {
-  int tryCount = 0;
-  Serial.println("");
-  Serial.print("Connecting to ");
-  Serial.println(ssid1);
-  WiFi.begin(ssid1, password1);
-  while ((WiFi.status() != WL_CONNECTED) && (tryCount < 5)) {
-    delay(500);
-    Serial.print(".");
-    tryCount++;
-  }
+int _twoWiFiConnect() {
+  _WiFiConnect(ssid1, password1);
   if (WiFi.status() == WL_CONNECTED) {
     ssid = 1;
   }
   else {
-    tryCount = 0;
-    Serial.println("");
-    Serial.println("Backup: ");
-    Serial.println(ssid2);
-    WiFi.begin(ssid2, password2);
-    while ((WiFi.status() != WL_CONNECTED) && (tryCount < 5)) {
-      delay(500);
-      Serial.print(".");
-      tryCount++;
-    }
+    _WiFiConnect(ssid2, password2);
     if (WiFi.status() == WL_CONNECTED) {
       ssid = 2;
     }
   }
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
+    Serial.println("WiFi connected.\nIP address: ");
     Serial.println(WiFi.localIP());
     return 1;
   }
   else {
-    Serial.println("");
-    Serial.println("WiFi NOT connected.");
+    #ifdef WIFI_VERBOSE
+      Serial.println("");
+      Serial.println("WiFi NOT connected.");
+    #endif
     ssid = 0;
     return 0;
   }
@@ -75,17 +70,19 @@ int twoWiFiConnect() {
 
 int WiFiConnect() {
   if (backup_wifi) {
-    return twoWiFiConnect();
+    return _twoWiFiConnect();
   }
   else {
-    return oneWiFiConnect();
+    return _oneWiFiConnect();
   }
 }
 
 int WiFiCheck() {
   if (WiFi.status() != WL_CONNECTED) {
     ssid = 0;
-    Serial.println("WiFi NOT connected.");
+    #ifdef WIFI_VERBOSE
+      Serial.println("WiFi NOT connected.");
+    #endif
     return (WiFiConnect() + 1);
   }
   else {

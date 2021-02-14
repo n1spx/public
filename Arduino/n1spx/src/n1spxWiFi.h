@@ -1,6 +1,8 @@
 #ifndef _N1SPXWIFI_H_
 #define _N1SPXWIFI_H_
 
+// #define WIFI_VERBOSE
+
 #include <WiFi.h>
 
 // These will defined in the actual sketch directory
@@ -14,8 +16,9 @@ extern bool backup_wifi;
 extern int ssid;
 
 // Internal calls for WiFiConnect to pick from
-int oneWiFiConnect();
-int twoWiFiConnect();
+int _oneWiFiConnect();
+int _twoWiFiConnect();
+void _WiFiConnect();
 
 int WiFiConnect();
 
