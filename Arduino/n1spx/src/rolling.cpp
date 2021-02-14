@@ -1,22 +1,28 @@
 #include "rolling.h"
+#include <stdlib.h>
 
-float updateRoll(rolling* roll, float newVal) {
-  roll->total -= roll->val[roll->count];
-  roll->val[roll->count] = newVal;
-  roll->total += roll->val[roll->count];
-  roll->avg = roll->total / ROLL_COUNT;
-  roll->count++;
-  if (roll->count == ROLL_COUNT) roll->count=0;
-  
-  return roll->total / ROLL_COUNT;
+float Rolling::upd(float newVal) {
+  total -= val[count];
+  val[count] = newVal;
+  total += val[count];
+  avg = total / samples;
+  count++;
+  if (count == samples) count=0;
+  return total / samples;
 }
 
-void initRoll(rolling* roll, float init) {
+void Rolling::init(float init) {
   int i;
-  for (i=0; i < ROLL_COUNT; i++) {
-    roll->val[i] = init;
+  for (i=0; i < samples; i++) {
+    val[i] = init;
   }
-  roll->total = init * ROLL_COUNT;
-  roll->avg = init;
+  total = init * samples;
+  avg = init;
   return;
+}
+
+Rolling::Rolling(int size) {
+  samples = size;
+  val = (float*) malloc(samples*sizeof(float));
+  count = 0;
 }

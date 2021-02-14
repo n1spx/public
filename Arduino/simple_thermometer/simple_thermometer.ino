@@ -64,7 +64,7 @@
 // **************
 
 // Include functions for rolling averages
-#include "rolling.h"
+#include <rolling.h>
 
 #include <ArduinoJson.h>
 #include <TimedAction.h>
@@ -82,14 +82,14 @@ DS18B20 probe(PROBE_PIN);
 
 WiFiServer server(SERVER_PORT);
 
-rolling temperature;
-rolling ADC;
+Rolling temperature(10);
+Rolling ADC(10);
 
 void getRolls() {
   float newTemp = C_or_F();
   Serial.println(newTemp);
-  updateRoll(&temperature, newTemp);
-  updateRoll(&ADC, analogRead(VOLTAGE_PIN));
+  temperature.upd(newTemp);
+  ADC.upd(analogRead(VOLTAGE_PIN));
 }
 
 TimedAction updateRolls(ROLL_DELAY, getRolls);
@@ -101,12 +101,12 @@ void setup() {
   WiFiConnect();
 
   pinMode(VOLTAGE_PIN, INPUT);
-  initRoll(&ADC, analogRead(VOLTAGE_PIN));
+  ADC.init(analogRead(VOLTAGE_PIN));
 
   server.begin();
   // DS18B20 always returns garbage on the first read, so eat it
   C_or_F();
-  initRoll(&temperature, C_or_F());
+  temperature.init(C_or_F());
 
   JSONWiFi = JSONbuffer.createNestedObject("wifi");
 }
