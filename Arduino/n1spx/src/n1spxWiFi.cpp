@@ -23,19 +23,14 @@ int _oneWiFiConnect() {
   _WiFiConnect(ssid1, password1);
   if (WiFi.status() == WL_CONNECTED) {
     ssid = 1;
-    #ifdef WIFI_VERBOSE
-      Serial.println("");
-      Serial.println("WiFi connected.");
-      Serial.println("IP address: ");
-      Serial.println(WiFi.localIP());
-    #endif
+    Serial.println("");
+    Serial.println("WiFi connected.\n address: ");
+    Serial.println(WiFi.localIP());
     return 1;
   }
   else {
-    #ifdef WIFI_VERBOSE
-      Serial.println("");
-      Serial.println("WiFi NOT connected.");
-    #endif
+    Serial.println("");
+    Serial.println("WiFi NOT connected.");
     ssid = 0;
     return 0;
   }
@@ -59,10 +54,8 @@ int _twoWiFiConnect() {
     return 1;
   }
   else {
-    #ifdef WIFI_VERBOSE
-      Serial.println("");
-      Serial.println("WiFi NOT connected.");
-    #endif
+    Serial.println("");
+    Serial.println("WiFi NOT connected.");
     ssid = 0;
     return 0;
   }
